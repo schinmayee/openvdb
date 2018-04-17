@@ -83,6 +83,26 @@ using Vec3dGrid    = Vec3DGrid;
 using Vec3fGrid    = Vec3SGrid;
 using VectorGrid   = Vec3fGrid;
 
+using  MaskTree_3_3   = tree::Tree3<ValueMask,   3, 3>::Type;
+using  BoolTree_3_3   = tree::Tree3<bool,        3, 3>::Type;
+using  FloatTree_3_3  = tree::Tree3<float,       3, 3>::Type;
+using  DoubleTree_3_3 = tree::Tree3<double,      3, 3>::Type;
+using  Int32Tree_3_3  = tree::Tree3<int32_t,     3, 3>::Type;
+using  UInt32Tree_3_3 = tree::Tree3<uint32_t,    3, 3>::Type;
+using  Int64Tree_3_3  = tree::Tree3<int64_t,     3, 3>::Type;
+using  Vec3ITree_3_3  = tree::Tree3<Vec3i,       3, 3>::Type;
+using  Vec3STree_3_3  = tree::Tree3<Vec3f,       3, 3>::Type;
+using  Vec3DTree_3_3  = tree::Tree3<Vec3d,       3, 3>::Type;
+using MaskGrid_3_3   = Grid<MaskTree_3_3>;
+using BoolGrid_3_3   = Grid<BoolTree_3_3>;
+using FloatGrid_3_3  = Grid<FloatTree_3_3>;
+using DoubleGrid_3_3 = Grid<DoubleTree_3_3>;
+using Int32Grid_3_3  = Grid<Int32Tree_3_3>;
+using Int64Grid_3_3  = Grid<Int64Tree_3_3>;
+using Vec3IGrid_3_3  = Grid<Vec3ITree_3_3>;
+using Vec3SGrid_3_3  = Grid<Vec3STree_3_3>;
+using Vec3DGrid_3_3  = Grid<Vec3DTree_3_3>;
+
 /// Global registration of basic types
 OPENVDB_API void initialize();
 

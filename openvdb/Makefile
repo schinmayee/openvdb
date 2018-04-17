@@ -84,19 +84,19 @@
 #
 
 # The directory into which to install libraries, executables and header files
-DESTDIR := /tmp/OpenVDB
+DESTDIR := $(HOME)/installations/openvdb_v4_0
 
 # The parent directory of the boost/ header directory
-BOOST_INCL_DIR := $(HT)/include
+BOOST_INCL_DIR := $(HOME)/installations/boost
 # The directory containing libboost_iostreams, libboost_system, etc.
-BOOST_LIB_DIR := $(HDSO)
+BOOST_LIB_DIR := $(HOME)/installations/boost/stage/lib
 BOOST_LIB := -lboost_iostreams -lboost_system
 BOOST_THREAD_LIB := -lboost_thread
 
 # The parent directory of the OpenEXR/ header directory
-EXR_INCL_DIR := $(HT)/include
+EXR_INCL_DIR := /usr/local/include
 # The directory containing IlmImf
-EXR_LIB_DIR := $(HDSO)
+EXR_LIB_DIR := /usr/local/lib
 EXR_LIB := -lIlmImf
 
 # The parent directory of the OpenEXR/ header directory (which contains half.h)
@@ -107,69 +107,68 @@ ILMBASE_LIB := -lIlmThread -lIex -lImath
 HALF_LIB := -lHalf
 
 # The parent directory of the tbb/ header directory
-TBB_INCL_DIR := $(HT)/include
+TBB_INCL_DIR := /usr/local/include/tbb
 # The directory containing libtbb
-TBB_LIB_DIR := $(HDSO)
+TBB_LIB_DIR := /usr/lib/x86_64-linux-gnu
 TBB_LIB := -ltbb
 
 # The parent directory of the blosc.h header
 # (leave blank if Blosc is unavailable)
-BLOSC_INCL_DIR := $(HT)/include
+BLOSC_INCL_DIR :=
 # The directory containing libblosc
-BLOSC_LIB_DIR := $(HDSO)
-BLOSC_LIB := -lblosc
+BLOSC_LIB_DIR :=
+BLOSC_LIB :=
 
 # A scalable, concurrent malloc replacement library
 # such as jemalloc (included in the Houdini HDK) or TBB malloc
 # (leave blank if unavailable)
-CONCURRENT_MALLOC_LIB := -ljemalloc
-#CONCURRENT_MALLOC_LIB := -ltbbmalloc_proxy -ltbbmalloc
+CONCURRENT_MALLOC_LIB := -ltbbmalloc_proxy -ltbbmalloc
 # The directory containing the malloc replacement library
-CONCURRENT_MALLOC_LIB_DIR := $(HDSO)
+CONCURRENT_MALLOC_LIB_DIR := /usr/lib/x86_64-linux-gnu
 
 # The parent directory of the cppunit/ header directory
 # (leave blank if CppUnit is unavailable)
-CPPUNIT_INCL_DIR := /rel/map/generic-2013.22/sys_include
+CPPUNIT_INCL_DIR := /usr/include
 # The directory containing libcppunit
-CPPUNIT_LIB_DIR := /rel/depot/third_party_build/cppunit/1.10.2-7/opt-ws5-x86_64-gccWS5_64/lib
+CPPUNIT_LIB_DIR := /usr/lib/x86_64-linux-gnu/
 CPPUNIT_LIB := -lcppunit
 
 # The parent directory of the log4cplus/ header directory
 # (leave blank if log4cplus is unavailable)
-LOG4CPLUS_INCL_DIR := /rel/folio/log4cplus/log4cplus-1.1.2-latest/sys_include
+LOG4CPLUS_INCL_DIR := /usr/include
 # The directory containing liblog4cplus
-LOG4CPLUS_LIB_DIR := /rel/folio/log4cplus/log4cplus-1.1.2-latest/library/c++11
+LOG4CPLUS_LIB_DIR := /usr/lib/x86_64-linux-gnu/
 LOG4CPLUS_LIB := -llog4cplus
 
 # The directory containing glfw.h
 # (leave blank if GLFW is unavailable)
-GLFW_INCL_DIR := /rel/third_party/glfw/glfw-3.0.1/include
+GLFW_INCL_DIR := /usr/local/include/
 # The directory containing libglfw
-GLFW_LIB_DIR := /rel/third_party/glfw/glfw-3.0.1/lib
-GLFW_LIB := -lglfw
+GLFW_LIB_DIR := /usr/local/lib
+GLFW_LIB := -lglfw3 -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread
 # The major version number of the GLFW library
 # (header filenames changed between GLFW 2 and 3, so this must be specified explicitly)
 GLFW_MAJOR_VERSION := 3
 
 # The version of Python for which to build the OpenVDB module
 # (leave blank if Python is unavailable)
-PYTHON_VERSION := 2.7
+PYTHON_VERSION :=
 # The directory containing Python.h
-PYTHON_INCL_DIR := $(HFS)/python/include/python$(PYTHON_VERSION)
+PYTHON_INCL_DIR :=
 # The directory containing pyconfig.h
-PYCONFIG_INCL_DIR := $(PYTHON_INCL_DIR)
+PYCONFIG_INCL_DIR :=
 # The directory containing libpython
-PYTHON_LIB_DIR := $(HFS)/python/lib
-PYTHON_LIB := -lpython$(PYTHON_VERSION)
+PYTHON_LIB_DIR :=
+PYTHON_LIB :=
 # The directory containing libboost_python
-BOOST_PYTHON_LIB_DIR := /rel/config/studio/baseline/boost/1.55.0.0/gcc-4.8.1.0/python-2.7.10.0/ext/lib/
-BOOST_PYTHON_LIB := -lboost_python-mt
+BOOST_PYTHON_LIB_DIR :=
+BOOST_PYTHON_LIB := 
 # The directory containing arrayobject.h
 # (leave blank if NumPy is unavailable)
-NUMPY_INCL_DIR := /rel/lang/python/2.7.9-1/lib/python2.7/site-packages/numpy/core/include/numpy/
+NUMPY_INCL_DIR :=
 # The Epydoc executable
 # (leave blank if Epydoc is unavailable)
-EPYDOC := /rel/map/generic_default-2014.24.237/bin/epydoc
+EPYDOC :=
 # Set PYTHON_WRAP_ALL_GRID_TYPES to "yes" to specify that the Python module
 # should expose (almost) all of the grid types defined in openvdb.h
 # Otherwise, only FloatGrid, BoolGrid and Vec3SGrid will be exposed

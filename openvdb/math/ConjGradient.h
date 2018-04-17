@@ -275,7 +275,8 @@ public:
     static const ValueType sZeroValue;
 
     /// Construct an @a n x @a n matrix with at most @a STENCIL_SIZE nonzero elements per row.
-    SparseStencilMatrix(SizeType n);
+    SparseStencilMatrix(SizeType nrows);
+    SparseStencilMatrix(SizeType nrows, SizeType ncols);
 
     /// Deep copy the given matrix.
     SparseStencilMatrix(const SparseStencilMatrix&);
@@ -283,6 +284,7 @@ public:
     //@{
     /// Return the number of rows in this matrix.
     SizeType numRows() const { return mNumRows; }
+    SizeType numCols() const { return mNumCols; }
     SizeType size() const { return mNumRows; }
     //@}
 
@@ -477,6 +479,7 @@ private:
     template<typename OtherValueType> struct EqOp;
 
     const SizeType                  mNumRows;
+    const SizeType                  mNumCols;
     boost::scoped_array<ValueType>  mValueArray;
     boost::scoped_array<SizeType>   mColumnIdxArray;
     boost::scoped_array<SizeType>   mRowSizeArray;
@@ -848,7 +851,20 @@ const ValueType SparseStencilMatrix<ValueType, STENCIL_SIZE>::sZeroValue = zeroV
 template<typename ValueType, SizeType STENCIL_SIZE>
 inline
 SparseStencilMatrix<ValueType, STENCIL_SIZE>::SparseStencilMatrix(SizeType numRows)
-    : mNumRows(numRows)
+    : mNumRows(numRows), mNumCols(numRows)
+    , mValueArray(new ValueType[mNumRows * STENCIL_SIZE])
+    , mColumnIdxArray(new SizeType[mNumRows * STENCIL_SIZE])
+    , mRowSizeArray(new SizeType[mNumRows])
+{
+    // Initialize the matrix to a null state by setting the size of each row to zero.
+    tbb::parallel_for(SizeRange(0, mNumRows),
+        internal::FillOp<SizeType>(mRowSizeArray.get(), /*value=*/0));
+}
+
+template<typename ValueType, SizeType STENCIL_SIZE>
+inline
+SparseStencilMatrix<ValueType, STENCIL_SIZE>::SparseStencilMatrix(SizeType numRows, SizeType numCols)
+    : mNumRows(numRows), mNumCols(numCols)
     , mValueArray(new ValueType[mNumRows * STENCIL_SIZE])
     , mColumnIdxArray(new SizeType[mNumRows * STENCIL_SIZE])
     , mRowSizeArray(new SizeType[mNumRows])
@@ -884,7 +900,7 @@ struct SparseStencilMatrix<ValueType, STENCIL_SIZE>::MatrixCopyOp
 template<typename ValueType, SizeType STENCIL_SIZE>
 inline
 SparseStencilMatrix<ValueType, STENCIL_SIZE>::SparseStencilMatrix(const SparseStencilMatrix& other)
-    : mNumRows(other.mNumRows)
+    : mNumRows(other.mNumRows), mNumCols(other.mNumCols)
     , mValueArray(new ValueType[mNumRows * STENCIL_SIZE])
     , mColumnIdxArray(new SizeType[mNumRows * STENCIL_SIZE])
     , mRowSizeArray(new SizeType[mNumRows])
@@ -967,7 +983,7 @@ struct SparseStencilMatrix<ValueType, STENCIL_SIZE>::VecMultOp
     {
         for (SizeType n = range.begin(), N = range.end(); n < N; ++n) {
             ConstRow row = mat->getConstRow(n);
-            out[n] = row.dot(in, mat->numRows());
+            out[n] = row.dot(in, mat->numCols());
         }
     }
 
@@ -983,7 +999,7 @@ inline void
 SparseStencilMatrix<ValueType, STENCIL_SIZE>::vectorMultiply(
     const Vector<VecValueType>& inVec, Vector<VecValueType>& resultVec) const
 {
-    if (inVec.size() != mNumRows) {
+    if (inVec.size() != mNumCols) {
         OPENVDB_THROW(ArithmeticError, "matrix and input vector have incompatible sizes ("
             << mNumRows << "x" << mNumRows << " vs. " << inVec.size() << ")");
     }
@@ -1097,7 +1113,7 @@ SparseStencilMatrix<ValueType, STENCIL_SIZE>::getRowEditor(SizeType i)
 {
     assert(i < mNumRows);
     const SizeType head = i * STENCIL_SIZE;
-    return RowEditor(&mValueArray[head], &mColumnIdxArray[head], mRowSizeArray[i], mNumRows);
+    return RowEditor(&mValueArray[head], &mColumnIdxArray[head], mRowSizeArray[i], mNumCols);
 }
 
 
@@ -1438,6 +1454,7 @@ public:
             typename MatrixType::ConstValueIter citer = srcRow.cbegin();
             for ( ; citer; ++citer) {
                 SizeType ii = citer.column();
+                if (ii >= numRows) continue; // block IC
                 if (ii < k+1) continue; // look above diagonal
 
                 TriangleRowEditor row_ii = mLowerTriangular.getRowEditor(ii);
@@ -1449,6 +1466,7 @@ public:
             citer.reset(); // k,j entries
             for ( ; citer; ++citer) {
                 SizeType j = citer.column();
+                if (j >= numRows) continue;  // block IC
                 if (j < k+1) continue;
 
                 TriangleConstRow row_j = mLowerTriangular.getConstRow(j);
@@ -1621,9 +1639,9 @@ template<typename MatrixOperator, typename T>
 inline void
 computeResidual(const MatrixOperator& A, const Vector<T>& x, const Vector<T>& b, Vector<T>& r)
 {
-    assert(x.size() == b.size());
-    assert(x.size() == r.size());
-    assert(x.size() == A.numRows());
+    assert(b.size() == A.numRows());
+    assert(b.size() == r.size());
+    assert(x.size() == A.numCols());
 
     computeResidual(A, x.data(), b.data(), r.data());
 }

@@ -53,6 +53,7 @@
 #define OPENVDB_TOOLS_VELOCITY_FIELDS_HAS_BEEN_INCLUDED
 
 #include <tbb/parallel_reduce.h>
+#include <openvdb/openvdb.h>
 #include <openvdb/Platform.h>
 #include "Interpolation.h" // for Sampler, etc.
 #include <openvdb/math/FiniteDifference.h>

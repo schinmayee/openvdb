@@ -100,6 +100,15 @@ initialize()
     Vec3IGrid::registerGrid();
     Vec3SGrid::registerGrid();
     Vec3DGrid::registerGrid();
+    BoolGrid_3_3::registerGrid();
+    MaskGrid_3_3::registerGrid();
+    FloatGrid_3_3::registerGrid();
+    DoubleGrid_3_3::registerGrid();
+    Int32Grid_3_3::registerGrid();
+    Int64Grid_3_3::registerGrid();
+    Vec3IGrid_3_3::registerGrid();
+    Vec3SGrid_3_3::registerGrid();
+    Vec3DGrid_3_3::registerGrid();
 
     // Register types associated with point index grids.
     Metadata::registerType(typeNameAsString<PointIndex32>(), Int32Metadata::createMetadata);
